@@ -13,7 +13,7 @@ namespace CultureIntelligence.API.Repositories.Implementation
         {
             this.dbContext = dbContext;
         }
-        public async Task<Category> CreateAsync(Category category)
+        public async Task<Category> CreateCategory(Category category)
         {
             await dbContext.Categories.AddAsync(category);
             await dbContext.SaveChangesAsync();

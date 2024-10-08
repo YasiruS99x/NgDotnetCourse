@@ -5,7 +5,7 @@ namespace CultureIntelligence.API.Repositories.Interface
 {
     public interface ICategoryRepository
     {
-        Task<Category> CreateAsync(Category category);
+        Task<Category> CreateCategory(Category category);
         Task<List<Category>> GetCategories();
         Task<Category?> GetCategoryById(Guid id);
         Task<Category?> EditCategory(Category category);

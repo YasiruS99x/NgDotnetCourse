@@ -14,6 +14,7 @@ namespace CultureIntelligence.API.Controllers
         {
             this.categoryRepository = categoryRepository;
         }
+
         [HttpPost]
         public async Task<IActionResult> CreateCategory(CreateCategoryRequestDto request)
         {
@@ -23,7 +24,7 @@ namespace CultureIntelligence.API.Controllers
                 UrlHandle = request.UrlHandle,
             };
 
-            await categoryRepository.CreateAsync(category);
+            await categoryRepository.CreateCategory(category);
 
             var result = new CategoryDto
             {
@@ -86,7 +87,7 @@ namespace CultureIntelligence.API.Controllers
 
         [HttpPut]
         [Route("{id:Guid}")]
-        public async Task<IActionResult> EditCategory([FromRoute] Guid id, UpdateCategoryRequest request)
+        public async Task<IActionResult> EditCategory([FromRoute] Guid id, UpdateCategoryRequestDto request)
         {
             var category = new Category
             {

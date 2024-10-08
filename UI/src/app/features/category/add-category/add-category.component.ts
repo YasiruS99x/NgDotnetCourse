@@ -24,8 +24,7 @@ export class AddCategoryComponent implements OnDestroy {
 
 
   onFormSubmit() {
-    console.log(this.model)
-    this.addCategorySubscription = this.categoryService.addCategory(this.model).subscribe((data) => {
+    this.addCategorySubscription = this.categoryService.createCategory(this.model).subscribe((data) => {
       this.router.navigateByUrl("/admin/categories")
     })
   }
