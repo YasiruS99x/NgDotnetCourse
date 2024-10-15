@@ -1,10 +1,14 @@
-﻿using CultureIntelligence.API.Models.Domain;
+﻿using CultureIntelligence.API.Data;
+using CultureIntelligence.API.Models.Domain;
 using CultureIntelligence.API.Models.DTO;
 using CultureIntelligence.API.Repositories.Interface;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CultureIntelligence.API.Controllers
 {
+    // https://localhost:xxxx/api/categories
     [Route("api/[controller]")]
     [ApiController]
     public class CategoriesController : ControllerBase
@@ -16,6 +20,7 @@ namespace CultureIntelligence.API.Controllers
         }
 
         [HttpPost]
+        //[Authorize(Roles = "Writer")]
         public async Task<IActionResult> CreateCategory(CreateCategoryRequestDto request)
         {
             var category = new Category
@@ -37,10 +42,17 @@ namespace CultureIntelligence.API.Controllers
 
         }
 
+        // GET: https://localhost:7226/api/Categories?query=html&sortBy=name&sortDirection=desc
         [HttpGet]
-        public async Task<IActionResult> GetCategories()
+        public async Task<IActionResult> GetAllCategories(
+            [FromQuery] string? query,
+            [FromQuery] string? sortBy,
+            [FromQuery] string? sortDirection,
+            [FromQuery] int? pageNumber,
+            [FromQuery] int? pageSize)
         {
-            var categories = await categoryRepository.GetCategories();
+            var categories = await categoryRepository
+                .GetCategories(query, sortBy, sortDirection, pageNumber, pageSize);
 
             var response = new List<CategoryDto>();
 
@@ -64,6 +76,7 @@ namespace CultureIntelligence.API.Controllers
 
         }
 
+        // GET: https://localhost:7226/api/categories/{id}
         [HttpGet]
         [Route("{id:Guid}")]
         public async Task<IActionResult> GetCategoryById([FromRoute] Guid id)
@@ -85,8 +98,10 @@ namespace CultureIntelligence.API.Controllers
 
         }
 
+        // PUT: https://localhost:7226/api/categories/{id}
         [HttpPut]
         [Route("{id:Guid}")]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> EditCategory([FromRoute] Guid id, UpdateCategoryRequestDto request)
         {
             var category = new Category
@@ -113,21 +128,35 @@ namespace CultureIntelligence.API.Controllers
             return Ok(response);
         }
 
+
+        // DELETE: https://localhost:7226/api/categories/{id}
         [HttpDelete]
         [Route("{id:Guid}")]
+        //[Authorize(Roles = "Writer")]
         public async Task<IActionResult> DeleteCategory([FromRoute] Guid id)
         {
             var category = await categoryRepository.DeleteCategory(id);
 
             if (category is null) return NotFound();
-            
+
             var response = new CategoryDto
             {
                 Id = category.Id,
                 Name = category.Name,
                 UrlHandle = category.UrlHandle
             };
-            return Ok(response); 
+            return Ok(response);
+        }
+
+        // GET: https://localhost:7226/api/categories/count
+        [HttpGet]
+        [Route("count")]
+        //[Authorize(Roles = "Writer")]
+        public async Task<IActionResult> GetCategoriesTotal()
+        {
+            var count = await categoryRepository.GetCount();
+
+            return Ok(count);
         }
     }
 }

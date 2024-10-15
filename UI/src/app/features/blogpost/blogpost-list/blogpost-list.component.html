@@ -10,12 +10,13 @@
                     <!-- <th>Id</th> -->
                     <th>Title</th>
                     <th>Short Description</th>
-                    <!-- <th>Content</th>
-                    <th>Featured ImageUrl</th>
+                    <th>Categories</th>
+                    <!-- <th>Featured ImageUrl</th>
                     <th>URL Handle</th>
                     <th>Publishe dDate</th>
                     <th>Author</th> -->
                     <th>Is Visible</th>
+                    <th>.</th>
                 </tr>
             </thead>
             <tbody>
@@ -23,12 +24,18 @@
                     <!-- <td>{{blogPost.id}}</td> -->
                     <td>{{blogPost.title}}</td>
                     <td>{{blogPost.shortDescription}}</td>
+                    <td >
+                        <span *ngFor="let category of blogPost.categories" class="badge bg-secondary">{{category.name}}</span>
+                    </td>
                     <!-- <td>{{blogPost.content}}</td>
                     <td>{{blogPost.featuredImageUrl}}</td>
                     <td>{{blogPost.urlHandle}}</td>
                     <td>{{blogPost.publishedDate}}</td>
                     <td>{{blogPost.author}}</td> -->
                     <td>{{blogPost.isVisible}}</td>
+                    <td>
+                        <a class="btn btn-light" [routerLink]="['/admin/blogposts',blogPost.id]">Edit</a>
+                    </td>
                 </tr>
             </tbody>
         </table>
