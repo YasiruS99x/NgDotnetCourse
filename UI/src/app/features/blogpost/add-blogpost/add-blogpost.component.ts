@@ -1,60 +1,74 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AddBlogPostRequest } from '../models/add-blog-post.model';
-import { Observable, Subscription } from 'rxjs';
 import { BlogpostService } from '../services/blog-post.service';
 import { Router } from '@angular/router';
 import { CategoryService } from '../../category/services/category.service';
+import { Observable, Subscription } from 'rxjs';
 import { Category } from '../../category/models/category.model';
+import { ImageService } from 'src/app/shared/components/image-selector/image.service';
 
 @Component({
   selector: 'app-add-blogpost',
   templateUrl: './add-blogpost.component.html',
   styleUrls: ['./add-blogpost.component.css']
 })
-export class AddBlogpostComponent implements OnInit {
-
+export class AddBlogpostComponent implements OnInit, OnDestroy {
   model: AddBlogPostRequest;
-  addBlogPostSubscription: Subscription
-  categories$: Observable<Category[]>;
+  isImageSelectorVisible : boolean = false;
+  categories$?: Observable<Category[]>;
 
-  constructor(
-    private blogpostService: BlogpostService,
+  imageSelectorSubscription?: Subscription;
+
+  constructor(private blogPostService: BlogpostService,
     private router: Router,
-    private categoryService: CategoryService
-  ) {
-    this.addBlogPostSubscription = new Subscription()
+    private categoryService: CategoryService,
+    private imageService: ImageService) {
     this.model = {
-      author: "",
-      content: "",
-      featuredImageUrl: "",
+      title: '',
+      shortDescription: '',
+      urlHandle: '',
+      content: '',
+      featuredImageUrl: '',
+      author: '',
       isVisible: true,
       publishedDate: new Date(),
-      shortDescription: "",
-      title: "",
-      urlHandle: "",
       categories: []
     }
-    this.categories$ = new Observable<Category[]>()
   }
+
 
   ngOnInit(): void {
-    this.categories$ = this.categoryService.getAllCategories()
+     this.categories$ = this.categoryService.getAllCategories();
+
+     this.imageSelectorSubscription = this.imageService.onSelectImage()
+     .subscribe({
+      next: (selectedImage) => {
+        this.model.featuredImageUrl = selectedImage.url;
+        this.closeImageSelector();
+      }
+     })
+
   }
 
-  onFormSubmit() {
-    this.addBlogPostSubscription = this.blogpostService.createBlogPost(this.model).subscribe((data) => {
-      this.router.navigateByUrl("/admin/blogposts")
-    })
+  onFormSubmit(): void {
+    console.log(this.model);
+    this.blogPostService.createBlogPost(this.model)
+    .subscribe({
+      next: (response) => {
+        this.router.navigateByUrl('/admin/blogposts');
+      }
+    });
   }
-  onChange(event: Event) {
-    const selectedOptions = Array.from((event.target as HTMLSelectElement).selectedOptions);
-    const selectedIds = selectedOptions.map(option => (option as HTMLOptionElement).value);
-    console.log('Selected IDs:', selectedOptions);
-    console.log('Selected IDs:', selectedIds);
+
+  openImageSelector(): void {
+    this.isImageSelectorVisible = true;
+  }
+
+  closeImageSelector() : void {
+    this.isImageSelectorVisible = false;
   }
 
   ngOnDestroy(): void {
-    this.addBlogPostSubscription.unsubscribe()
+    this.imageSelectorSubscription?.unsubscribe();
   }
-
 }

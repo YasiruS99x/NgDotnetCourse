@@ -45,10 +45,10 @@ namespace CultureIntelligence.API.Data
             var admin = new IdentityUser()
             {
                 Id = adminUserId,
-                UserName = "admin@codepulse.com",
-                Email = "admin@codepulse.com",
-                NormalizedEmail = "admin@codepulse.com".ToUpper(),
-                NormalizedUserName = "admin@codepulse.com".ToUpper()
+                UserName = "admin@99x.io",
+                Email = "admin@99x.io",
+                NormalizedEmail = "admin@99x.io".ToUpper(),
+                NormalizedUserName = "admin@99x.io".ToUpper()
             };
 
             admin.PasswordHash = new PasswordHasher<IdentityUser>().HashPassword(admin, "Admin@123");

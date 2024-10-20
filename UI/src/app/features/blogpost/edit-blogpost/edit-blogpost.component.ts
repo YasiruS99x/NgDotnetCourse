@@ -1,4 +1,3 @@
-
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
@@ -7,12 +6,14 @@ import { BlogPost } from '../models/blog-post.model';
 import { CategoryService } from '../../category/services/category.service';
 import { Category } from '../../category/models/category.model';
 import { UpdateBlogPost } from '../models/update-blog-post.model';
+import { ImageService } from 'src/app/shared/components/image-selector/image.service';
+
 @Component({
   selector: 'app-edit-blogpost',
   templateUrl: './edit-blogpost.component.html',
   styleUrls: ['./edit-blogpost.component.css']
 })
-export class EditBlogpostComponent {
+export class EditBlogpostComponent implements OnInit, OnDestroy {
   id: string | null = null;
   model?: BlogPost;
   categories$? : Observable<Category[]>;
@@ -28,9 +29,10 @@ export class EditBlogpostComponent {
 
 
   constructor(private route: ActivatedRoute,
-    private blogPostService: BlogpostService,
+    private blogpostService: BlogpostService,
     private categoryService: CategoryService,
-    private router:Router) {
+    private router:Router,
+    private imageService: ImageService) {
 
   }
 
@@ -45,7 +47,7 @@ export class EditBlogpostComponent {
 
         // Get BlogPost From API
         if (this.id) {
-          this.getBlogPostSubscription = this.blogPostService.getBlogPostById(this.id).subscribe({
+          this.getBlogPostSubscription = this.blogpostService.getBlogPostById(this.id).subscribe({
             next: (response) => {
               this.model = response;
               this.selectedCategories = response.categories.map(x => x.id);
@@ -53,6 +55,16 @@ export class EditBlogpostComponent {
           });
           ;
         }
+
+        this.imageSelectSubscricption = this.imageService.onSelectImage()
+        .subscribe({
+          next: (response) => {
+            if (this.model) {
+              this.model.featuredImageUrl = response.url;
+              this.isImageSelectorVisible = false;
+            }
+          }
+        })
       }
     });
   }
@@ -72,7 +84,7 @@ export class EditBlogpostComponent {
         categories: this.selectedCategories ?? []
       };
 
-      this.updateBlogPostSubscription = this.blogPostService.updateBlogPost(this.id, updateBlogPost)
+      this.updateBlogPostSubscription = this.blogpostService.updateBlogPost(this.id, updateBlogPost)
       .subscribe({
         next: (response) => {
           this.router.navigateByUrl('/admin/blogposts');
@@ -85,7 +97,7 @@ export class EditBlogpostComponent {
   onDelete(): void {
     if (this.id) {
       // call service and delete blogpost
-      this.deleteBlogPostSubscription = this.blogPostService.deleteBlogPost(this.id)
+      this.deleteBlogPostSubscription = this.blogpostService.deleteBlogPost(this.id)
       .subscribe({
         next: (response) => {
           this.router.navigateByUrl('/admin/blogposts');
