@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import {
   HttpRequest,
   HttpHandler,
@@ -6,13 +6,33 @@ import {
   HttpInterceptor
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
+import { CookieService } from 'ngx-cookie-service';
+import { AuthService } from 'src/app/features/auth/services/auth.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
 
-  constructor() {}
+  constructor() { }
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
+    const cookieService = inject(CookieService);  
+    // Check for the JWT Token
+    let token = cookieService.get('Authorization');
+
+    if (token) {
+      request = request.clone({
+        setHeaders: {
+          Authorization: token
+        }
+      });
+    }
+
+    // Pass the request to the next handler
     return next.handle(request);
   }
 }
+
+
+
+

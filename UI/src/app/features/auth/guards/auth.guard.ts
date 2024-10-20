@@ -28,12 +28,13 @@ export const authGuard: CanActivateFn = (route, state) => {
     } else {
       // Token is still valid
 
-      if (user.roles.includes('Writer')) {
-        return true;
-      } else {
-        alert('Unauthorized');
-        return false;
-      }
+      // if (user.roles.includes('Writer')) {
+      //   return true;
+      // } else {
+      //   alert('Unauthorized');
+      //   return false;
+      // }
+      return true
     }
   } else {
     // Logout
