@@ -23,7 +23,7 @@ namespace CultureIntelligence.API.Controllers
 
         // POST: {apibaseurl}/api/blogposts
         [HttpPost]
-        //[Authorize(Roles = "Writer")]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> CreateBlogPost(CreateBlogPostRequestDto request)
         {
             var blogPost = new BlogPost
@@ -185,7 +185,7 @@ namespace CultureIntelligence.API.Controllers
         // PUT: {apibaseurl}/api/blogposts/{id}
         [HttpPut]
         [Route("{id:Guid}")]
-        //[Authorize(Roles = "Writer")]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> UpdateBlogPostById([FromRoute] Guid id, UpdateBlogPostRequestDto request)
         {
             var blogPost = new BlogPost
@@ -245,7 +245,7 @@ namespace CultureIntelligence.API.Controllers
         // DELETE: {apibaseurl}/api/blogposts/{id}
         [HttpDelete]
         [Route("{id:Guid}")]
-        //[Authorize(Roles = "Writer")]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> DeleteBlogPost([FromRoute] Guid id)
         {
             var deletedBlogPost = await blogPostRepository.DeleteAsync(id);

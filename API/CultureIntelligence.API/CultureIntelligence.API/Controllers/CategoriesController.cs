@@ -20,7 +20,7 @@ namespace CultureIntelligence.API.Controllers
         }
 
         [HttpPost]
-        //[Authorize(Roles = "Writer")]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> CreateCategory(CreateCategoryRequestDto request)
         {
             var category = new Category
@@ -132,7 +132,7 @@ namespace CultureIntelligence.API.Controllers
         // DELETE: https://localhost:7226/api/categories/{id}
         [HttpDelete]
         [Route("{id:Guid}")]
-        //[Authorize(Roles = "Writer")]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> DeleteCategory([FromRoute] Guid id)
         {
             var category = await categoryRepository.DeleteCategory(id);
@@ -151,7 +151,7 @@ namespace CultureIntelligence.API.Controllers
         // GET: https://localhost:7226/api/categories/count
         [HttpGet]
         [Route("count")]
-        //[Authorize(Roles = "Writer")]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> GetCategoriesTotal()
         {
             var count = await categoryRepository.GetCount();
